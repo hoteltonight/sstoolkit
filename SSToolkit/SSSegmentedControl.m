@@ -221,11 +221,15 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 
 
 - (void)drawRect:(CGRect)frame {
-	static CGFloat dividerWidth = 1.0f;
+	CGFloat dividerWidth = 0.0f;
+    if (_dividerImage)
+    {
+        dividerWidth = _dividerImage.size.width;
+    }
 	
 	NSInteger count = (NSInteger)[self numberOfSegments];
 	CGSize size = frame.size;
-	CGFloat segmentWidth = roundf((size.width - count - 1) / (CGFloat)count);
+	CGFloat segmentWidth = roundf((size.width - ((count - 1) * dividerWidth)) / (CGFloat)count);
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	for (NSInteger i = 0; i < count; i++) {
