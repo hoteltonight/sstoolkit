@@ -290,6 +290,11 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 										backgroundRect.size.width + capWidth + capWidth, backgroundRect.size.height);
 		}
 		
+        if (_selectedSegmentIndex == i - 1) {
+            backgroundRect.origin.x -= 2.0;
+            backgroundRect.size.width += 2.0;
+        }
+        
 		[backgroundImage drawInRect:backgroundRect];
 		
 		// Strings
