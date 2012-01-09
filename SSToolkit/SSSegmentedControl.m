@@ -23,6 +23,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	NSMutableArray *_segments;
 	NSInteger _selectedSegmentIndex;
 	NSMutableDictionary *_segmentMeta;
+	NSMutableArray *_accessibilityElements;
 }
 
 
@@ -170,6 +171,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	[_disabledTextColor release];
 	[_textShadowColor release];
 	[_segmentMeta release];
+	[_accessibilityElements release];
 	[super dealloc];
 }
 
@@ -232,6 +234,11 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	CGFloat segmentWidth = roundf((size.width - ((count - 1) * dividerWidth)) / (CGFloat)count);
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
+	if ([_accessibilityElements count] > 0)
+	{
+		[_accessibilityElements removeAllObjects];
+	}
+    
 	for (NSInteger i = 0; i < count; i++) {
 		CGContextSaveGState(context);
 		
@@ -296,7 +303,26 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
         }
         
 		[backgroundImage drawInRect:backgroundRect];
+        
 		
+		NSUInteger numberOfSegments = [self numberOfSegments];
+		CGFloat segmentWidth = CGRectGetWidth(self.bounds) / numberOfSegments;
+		CGFloat segmentHeight = CGRectGetHeight(self.bounds);        
+		UIAccessibilityElement *element = [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
+		element.isAccessibilityElement = YES;
+		CGRect segmentFrame = CGRectMake(i * segmentWidth, 0, segmentWidth, segmentHeight);
+		element.accessibilityFrame = [self.window convertRect:segmentFrame fromView:self];
+		UIAccessibilityTraits traits = UIAccessibilityTraitAllowsDirectInteraction;
+		if (i == [self selectedSegmentIndex]) 
+		{
+			traits = traits | UIAccessibilityTraitSelected;
+		}
+
+		if (enabled == NO)
+		{
+			traits = traits | UIAccessibilityTraitNotEnabled;
+		}        
+    
 		// Strings
 		if ([item isKindOfClass:[NSString class]]) {
 			NSString *string = (NSString *)item;
@@ -313,6 +339,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 				[_disabledTextColor set];
 			}
 			
+			element.accessibilityLabel = [NSString stringWithFormat:NSLocalizedString(@"%@. Tab %d, of %d.", nil), string, i+1, numberOfSegments];
 			[string drawInRect:textRect withFont:_font lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
 		}
 		
@@ -327,6 +354,11 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 		}
 		
 		CGContextRestoreGState(context);
+        
+		// Add the accessibility element.
+		element.accessibilityTraits = traits;
+		[_accessibilityElements addObject:element];
+		[element release];
 	}
 }
 
@@ -361,7 +393,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 
 
 - (NSString *)titleForSegmentAtIndex:(NSUInteger)segment {
-	if ([self numberOfSegments] - 1 >= segment) {
+    if ([self numberOfSegments] - 1 >= segment) {
 		return nil;
 	}
 	
@@ -401,7 +433,6 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 
 - (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSUInteger)segment {
 	[self _setMetaValue:[NSNumber numberWithBool:enabled] forKey:kSSSegmentedControlEnabledKey segmentIndex:segment];
-	
 }
 
 
@@ -420,6 +451,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	self.backgroundColor = [UIColor clearColor];
 	
 	_segments = [[NSMutableArray alloc] init];
+	_accessibilityElements = [[NSMutableArray alloc] init];
 	_momentary = NO;
 	
 	self.buttonImage = [[UIImage imageNamed:@"UISegmentBarButton.png" bundleName:kSSToolkitBundleName] stretchableImageWithLeftCapWidth:6 topCapHeight:0];
@@ -469,4 +501,25 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	[self setNeedsDisplay];
 }
 
+#pragma mark Accessibility
+
+- (BOOL)isAccessibilityElement
+{
+	return NO;
+}
+
+- (NSInteger)accessibilityElementCount
+{
+	return [_accessibilityElements count];
+}
+
+- (id)accessibilityElementAtIndex:(NSInteger)index
+{
+	return [_accessibilityElements objectAtIndex:index];
+}
+
+- (NSInteger)indexOfAccessibilityElement:(id)element
+{
+	return [_accessibilityElements indexOfObject:element];
+}
 @end
