@@ -312,7 +312,15 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 		element.isAccessibilityElement = YES;
 		CGRect segmentFrame = CGRectMake(i * segmentWidth, 0, segmentWidth, segmentHeight);
 		element.accessibilityFrame = [self.window convertRect:segmentFrame fromView:self];
-		UIAccessibilityTraits traits = UIAccessibilityTraitAllowsDirectInteraction;
+		
+		
+		UIAccessibilityTraits traits; 		
+		BOOL DeviceIsOniOS5OrGreater = (NSClassFromString(@"TWRequest") != nil);
+		if (DeviceIsOniOS5OrGreater == YES)
+		{
+			traits |= UIAccessibilityTraitAllowsDirectInteraction;
+		}
+
 		if (i == [self selectedSegmentIndex]) 
 		{
 			traits = traits | UIAccessibilityTraitSelected;
