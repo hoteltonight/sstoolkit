@@ -365,7 +365,10 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
         
 		// Add the accessibility element.
 		element.accessibilityTraits = traits;
-		[_accessibilityElements addObject:element];
+		if (element != nil) // [#24543251] Workaround for iOS 4.0.x bug
+		{
+			[_accessibilityElements addObject:element];
+		}
 		[element release];
 	}
 }
