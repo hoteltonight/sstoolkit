@@ -314,7 +314,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 		element.accessibilityFrame = [self.window convertRect:segmentFrame fromView:self];
 		
 		
-		UIAccessibilityTraits traits; 		
+		UIAccessibilityTraits traits = UIAccessibilityTraitNone;
 		BOOL DeviceIsOniOS5OrGreater = (NSClassFromString(@"TWRequest") != nil);
 		if (DeviceIsOniOS5OrGreater == YES)
 		{
