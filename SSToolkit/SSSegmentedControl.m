@@ -245,7 +245,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 		id item = [_segments objectAtIndex:(NSUInteger)i];
 		BOOL enabled = [self isEnabledForSegmentAtIndex:(NSUInteger)i];
 		
-		CGFloat x = (segmentWidth * (CGFloat)i + (((CGFloat)i + 1) * dividerWidth));
+		CGFloat x = (segmentWidth * (CGFloat)i + ((CGFloat)i * dividerWidth));
 		
 		// Draw dividers
 		if (i > 0) {
