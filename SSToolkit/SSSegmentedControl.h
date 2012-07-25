@@ -28,6 +28,7 @@ enum {
 
 @property (nonatomic, retain) UIFont *font;
 @property (nonatomic, retain) UIColor *textColor;
+@property (nonatomic, retain) UIColor *selectedTextColor;
 @property (nonatomic, retain) UIColor *disabledTextColor;
 @property (nonatomic, retain) UIColor *textShadowColor;
 @property (nonatomic, assign) CGSize textShadowOffset;

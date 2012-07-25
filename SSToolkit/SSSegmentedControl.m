@@ -99,6 +99,17 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	[self setNeedsDisplay];
 }
 
+@synthesize selectedTextColor = _selectedTextColor;
+
+- (void)setSelectedTextColor:(UIColor *)selectedTextColor {
+	[selectedTextColor retain];
+	[_selectedTextColor release];
+	_selectedTextColor = selectedTextColor;
+	
+	[self setNeedsDisplay];
+}
+
+
 @synthesize disabledTextColor = _disabledTextColor;
 
 - (void)setDisabledTextColor:(UIColor *)disabledTextColor {
@@ -168,6 +179,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	[_highlightedDividerImage release];
 	[_font release];
 	[_textColor release];
+	[_selectedTextColor release];
 	[_disabledTextColor release];
 	[_textShadowColor release];
 	[_segmentMeta release];
@@ -244,6 +256,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 		
 		id item = [_segments objectAtIndex:(NSUInteger)i];
 		BOOL enabled = [self isEnabledForSegmentAtIndex:(NSUInteger)i];
+		BOOL selected = (i == self.selectedSegmentIndex);
 		
 		CGFloat x = (segmentWidth * (CGFloat)i + ((CGFloat)i * dividerWidth));
 		
@@ -342,7 +355,10 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 				[_textShadowColor set];
 				[string drawInRect:CGRectAddPoint(textRect, CGPointMake(_textShadowOffset.width, _textShadowOffset.height)) withFont:_font lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentCenter];
 				
-				[_textColor set];
+				if (selected)
+					[_selectedTextColor set];
+				else 
+					[_textColor set];
 			} else {
 				[_disabledTextColor set];
 			}
@@ -473,6 +489,7 @@ static NSString *kSSSegmentedControlEnabledKey = @"enabled";
 	
 	_font = [[UIFont boldSystemFontOfSize:12.0f] retain];
 	_textColor = [[UIColor whiteColor] retain];
+	_selectedTextColor = [[UIColor whiteColor] retain];
 	_disabledTextColor = [[UIColor colorWithWhite:0.561f alpha:1.0f] retain];
 	_textShadowColor = [[UIColor colorWithWhite:0.0f alpha:0.5f] retain];
 	_textShadowOffset = CGSizeMake(0.0f, -1.0f);
